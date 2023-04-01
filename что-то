@@ -196,3 +196,126 @@ int main() {
 
 
 
+
+/*   - список односвязный с рандомным заполнением -   */
+#include <iostream>
+#include <iostream>
+#include <stdlib.h>
+#include <time.h>
+
+int GetRandomNumber(int min, int max) {
+    int num = min + rand() % (max - min + 1);
+    return num;
+}
+
+struct Node {
+    char data;
+    Node* next;
+};
+
+struct RingQueue {
+    Node* front{ nullptr };
+    Node* rear{ nullptr };
+};
+
+
+bool empty(RingQueue& a_ring_queue) {
+    return (a_ring_queue.front == nullptr && a_ring_queue.rear == nullptr);
+}
+
+void push(RingQueue& a_ring_queue, int new_data) {
+    if (empty(a_ring_queue)) {
+        a_ring_queue.front = new Node();
+        a_ring_queue.front->data = new_data;
+        a_ring_queue.front->next = a_ring_queue.front;
+        a_ring_queue.rear = a_ring_queue.front;
+    }
+    else {
+        a_ring_queue.rear->next = new Node();
+        a_ring_queue.rear->next->data = new_data;
+        a_ring_queue.rear->next->next = a_ring_queue.front;
+        a_ring_queue.rear = a_ring_queue.rear->next;
+    }
+}
+
+bool pop(RingQueue& a_ring_queue) {
+    if (empty(a_ring_queue)) {
+        return false;
+    }
+    else {
+        if (a_ring_queue.front == a_ring_queue.rear) {
+            delete a_ring_queue.front;
+            a_ring_queue.front = nullptr;
+            a_ring_queue.rear = nullptr;
+        }
+        else {
+            Node* second_node_of_queue = a_ring_queue.front->next;
+            delete a_ring_queue.front;
+            a_ring_queue.front = second_node_of_queue;
+            a_ring_queue.rear->next = a_ring_queue.front;
+        }
+    }
+    return true;
+}
+
+void show(RingQueue& a_ring_queue) {
+    if (empty(a_ring_queue)) {
+        std::cout << "Очередь пуста." << std::endl;
+        return;
+    }
+    else {
+        Node* next = a_ring_queue.front;
+        while (next != a_ring_queue.rear) {
+            std::cout << next->data;
+            next = next->next;
+        }
+        std::cout << a_ring_queue.rear->data;
+    }
+    std::cout << std::endl;
+}
+
+bool function(RingQueue& q, int& number_of_iterations) {
+    int push_or_pop{ GetRandomNumber(1, 100) };
+    int num_of_nodes{ GetRandomNumber(1, 3) };
+    std::cout << number_of_iterations << ": ";
+    if (push_or_pop % 2 == 0) {
+        std::cout << "Выполняется " << "добавление " << num_of_nodes << " раз(а)." << std::endl;
+        for (int i{}; i < num_of_nodes; i++) {
+            push(q, GetRandomNumber(65, 90));
+        }
+    }
+    else {
+        std::cout << "Выполняется " << "удаление " << num_of_nodes << " раз(а)." << std::endl;
+        for (int i{}; i < num_of_nodes; i++) {
+            pop(q);
+        }
+    }
+    std::cout << "Состояние очереди: ";
+    show(q);
+
+    std::cout << "Стоп? - ";
+    char stop_or_continue{};
+    std::cin >> stop_or_continue;
+    number_of_iterations++;
+    if (stop_or_continue == 'q') {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+void interface(RingQueue& q) {
+    int number_of_iterations{ 1 };
+    while (function(q, number_of_iterations)) {
+        std::cout << "---------------------------------" << std::endl;
+    }
+}
+
+int main() {
+    RingQueue q;
+    setlocale(LC_ALL, "Ru");
+    srand(static_cast <unsigned int>(time(NULL)));
+    interface(q);
+    return 1;
+}
