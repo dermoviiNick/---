@@ -1,0 +1,198 @@
+/*    - СТЕК -    */ 
+// funcs.cpp
+#include "funcs.h"
+
+int main() {
+	setlocale(LC_ALL, "Rus"); // Русский язык
+	srand(time(NULL));        // Чтобы рандом был каждый раз "рандомным" 
+
+	Stack* s_top{ NULL };  // вершина основного стека 
+	Stack* ds_top{ NULL }; // вершина доп стека
+
+	menu(s_top, ds_top); // вызов меню программы
+
+	return 0;
+}
+// funcs.h
+#include <ctime> 
+#include <stdlib.h> 
+struct Stack {
+	int element;
+	Stack* next_element;
+};
+/*   -МЕНЮ-   */
+void menu(Stack*& s_top, Stack*& ds_top); 
+int textMenu(); // Просто текст меню
+/*   -Вывод стека-   */
+void s_print(Stack* s_top, Stack* ds_top, bool z = 0, int number = 0); // Вывод стека на экран (также используется при добавлении элементов)
+/*   -Добавление элементов-   */
+void s_add(Stack*& s_top, Stack*& ds_top);
+void s_pass(Stack*& s_top, Stack*& ds_top, int number);
+int s_push(Stack*& ds_top);
+/*   -Удаление элемента-   */
+void s_delete(Stack*& s_top, Stack*& ds_top);
+void s_delete_element(Stack*& ds_top, int number);
+/*   -Доп функции-   */
+int checkInteger(int a, int b); // Проверка на ввод числа из указанного диапозона
+int check_number(Stack* top); // Возвращается кол-во значений в введённом стеке
+
+// SOURCE.CPP 
+#include "funcs.h"
+
+int main() {
+	setlocale(LC_ALL, "Rus"); // Русский язык
+	srand(time(NULL));        // Чтобы рандом был каждый раз "рандомным" 
+
+	Stack* s_top{ NULL };  // вершина основного стека 
+	Stack* ds_top{ NULL }; // вершина доп стека
+
+	menu(s_top, ds_top); // вызов меню программы
+
+	return 0;
+}
+
+
+
+/*   - очередь -   */
+#include <iostream>
+
+const int size{ 5 };
+int ring_queue[size];
+int front{ -1 };
+int rear{ -1 };
+
+
+bool empty() {
+    return front == -1 && rear == -1;
+}
+
+bool full() {
+    return (front == 0 && rear == size - 1) || (rear == (front - 1) % (size - 1));
+}
+
+bool push() {
+    if (full()) {
+        std::cout << "Очередь полна" << std::endl;
+        return false;
+    }
+    std::cout << "Введите значение: ";
+    int new_data;
+    std::cin >> new_data;
+    if (rear == size - 1) {
+        rear = 0;
+        ring_queue[rear] = new_data;
+    }
+    else {
+        if (empty()) {
+            front = 0;
+        }
+        rear++;
+        ring_queue[rear] = new_data;
+    }
+    return true;
+}
+
+bool pop() {
+    if (empty()) {
+        std::cout << "Очередь пуста." << std::endl;
+        return false;
+    }
+    else if (front == rear) { // всего 1 элемент
+        front = -1;
+        rear = -1;
+    }
+    else if (front == size - 1) {
+        front = 0;
+    }
+    else {
+        front++;
+    }
+    return true;
+}
+
+void show() {
+    if (empty()) {
+        std::cout << "Очередь пуста." << std::endl;
+        return;
+    }
+    std::cout << "Очередь: " << "[" << front << "; " << rear << "]" << std::endl;
+    std::cout << std::endl;
+    if (rear >= front) {
+        for (int i{ front }; i <= rear; i++) {
+            std::cout << ring_queue[i] << " ";
+        }
+        /*
+        std::cout << std::endl;
+        for (int i{}; i < size; i++) {
+            if (front <= i && i <= rear) {
+                std::cout << ring_queue[i] << " ";
+            }
+            else {
+                std::cout << '*' << " ";
+            }
+        }
+        */
+    }
+    else {
+        for (int i{ front }; i < size; i++) {
+            std::cout << ring_queue[i] << " ";
+        }
+        for (int i{ 0 }; i <= rear; i++) {
+            std::cout << ring_queue[i] << " ";
+        }
+        /*
+        std::cout << std::endl;
+        for (int i{ 0 }; i < size; i++) {
+            if (i <= rear) {
+                std::cout << ring_queue[i] << " ";
+            }
+            else
+            {
+                if (front <= i) {
+                    std::cout << ring_queue[i] << " ";
+                }
+                else {
+                    std::cout << '*' << " ";
+                }
+            }
+        }
+        */
+    }
+    std::cout << std::endl;
+}
+
+bool choise_function() {
+    std::cout << "Функции: 1-Выход, 2-Показать, 3-Добавить, 4-Удалить\nВыбор: ";
+    int n;
+    std::cin >> n;
+    switch (n) {
+    case 1:
+        return false;
+    case 2:
+        show();
+        return true;
+    case 3:
+        push();
+        return true;
+    case 4:
+        pop();
+        return true;
+    default:
+        return true;
+    }
+}
+
+void interface() {
+    while (choise_function()) {
+        std::cout << "---------------------------------" << std::endl;
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "Ru");
+    interface();
+    return 1;
+}
+
+
+
